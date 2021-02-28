@@ -1,52 +1,42 @@
 package merge_sort
 
-func MergeSortInts(arr []int) int {
-	return _mergeSortInts(arr)
-}
+func merge(l []int, r []int) []int {
+	result := []int{}
 
-func _mergeSortInts(arr []int) int {
-	if len(arr) <= 1 {
-		return 0
-	}
-	mid := (len(arr) / 2)
-	//Gather inversions from the two sub arrays
-	inv_low := _mergeSortInts(arr[:mid])
-	inv_high := _mergeSortInts(arr[mid:])
-	//Gather the split inversions
-	split_inv := _merge(arr, mid)
-	return inv_low + inv_high + split_inv
-}
-
-func _merge(arr []int, mid int) int {
-	arr_lo := make([]int, len(arr[:mid]))
-	arr_hi := make([]int, len(arr[mid:]))
-	copy(arr_lo, arr[:mid])
-	copy(arr_hi, arr[mid:])
-	var i, j, k, split_inv int
-
-	//Copy till either of the sub arrays gets completely copied
-	for i < len(arr_lo) && j < len(arr_hi) {
-		if arr_lo[i] <= arr_hi[j] {
-			arr[k] = arr_lo[i]
-			i++
+	for len(l) > 0 || len(r) > 0 {
+		if len(l) > 0 && len(r) > 0 {
+			if l[0] < r[0] {
+				result = append(result, l[0])
+				l = l[1:]
+			} else {
+				result = append(result, r[0])
+				r = r[1:]
+			}
+		} else if len(l) > 0 {
+			result = append(result, l[0])
+			l = l[1:]
 		} else {
-			arr[k] = arr_hi[j]
-			j++
-			split_inv += mid - i
+			result = append(result, r[0])
+			r = r[1:]
 		}
-		k++
 	}
-	//Copy the remaining elements of the sub-array if any
-	for i < len(arr_lo) {
-		arr[k] = arr_lo[i]
-		i++
-		k++
+
+	return result
+}
+
+// MergeSort algorithm applied to the given unsorted list
+func MergeSort(list []int) []int {
+	switch len(list) {
+	case 0:
+		return list
+	case 1:
+		return list
+	default:
+		m := len(list) / 2
+		l := list[:m]
+		r := list[m:]
+		left := MergeSort(l)
+		right := MergeSort(r)
+		return merge(left, right)
 	}
-	//Copy the remaining elements of the sub-array if any
-	for j < len(arr_hi) {
-		arr[k] = arr_hi[j]
-		j++
-		k++
-	}
-	return split_inv
 }
